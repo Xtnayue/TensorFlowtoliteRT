@@ -1,20 +1,21 @@
-# convert_tf_to_tflite.py
+# scripts/tf_to_tflite.py
 import tensorflow as tf
 from transformers import AutoTokenizer
 
-MODEL_PATH = "./qwen3-tf"
+MODEL_PATH = "../converted/tf_model"
+OUTPUT_TFLITE = "../converted/qwen3.tflite"
 
-# 加载 Tokenizer 和 TF 模型
+print("🧠 加载 TensorFlow 模型...")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
 model = tf.keras.models.load_model(MODEL_PATH)
 
-# 设置 TFLite 转换器
+print("🔄 开始转换为 TFLite...")
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
-converter.optimizations = [tf.lite.Optimize.DEFAULT]  # 启用量化优化
+converter.optimizations = [tf.lite.Optimize.DEFAULT]  # 启用量化压缩
 tflite_model = converter.convert()
 
-# 保存 TFLite 模型
-with open("qwen3.tflite", "wb") as f:
+print(f"💾 保存为 {OUTPUT_TFLITE}...")
+with open(OUTPUT_TFLITE, "wb") as f:
     f.write(tflite_model)
 
-print("✅ 模型已转换为 TFLite 格式")
+    print("✅ 转换完成！")
