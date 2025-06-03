@@ -1,13 +1,15 @@
-# convert_hf_pt_to_tf.py
+# scripts/pt_to_tf.py
 from transformers import AutoTokenizer, TFAutoModelForCausalLM
 
-MODEL_PATH = "./qwen3-30b-a3b"
-OUTPUT_PATH = "./qwen3-tf"
+MODEL_PATH = "../models/qwen3-30b-a3b"
+OUTPUT_PATH = "../converted/tf_model"
 
-# 加载 PyTorch 模型并转换为 TensorFlow 模型
+print("🧠 加载 Qwen3 模型（PyTorch）...")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
 model = TFAutoModelForCausalLM.from_pretrained(MODEL_PATH, from_pt=True)
+
+print("💾 保存为 TensorFlow 格式...")
 model.save_pretrained(OUTPUT_PATH)
 tokenizer.save_pretrained(OUTPUT_PATH)
 
-print("✅ 模型已保存为 TensorFlow 格式")
+print("✅ 转换完成！")
