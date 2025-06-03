@@ -1,0 +1,46 @@
+name: Convert Qwen3-30B to TFLite
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "qwen3-30b-a3b/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install torch transformers tensorflow tf-nightly
+
+      - name: Convert PyTorch to TensorFlow
+        run: |
+          python convert_hf_pt_to_tf.py
+
+      - name: Convert TensorFlow to TFLite
+        run: |
+          python convert_tf_to_tflite.py
+
+      - name: Upload TFLite Model
+        uses: actions/upload-artifact@v3
+        with:
+          name: qwen3-tflite
+          path: qwen3.tflite
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          files: qwen3.tflite
